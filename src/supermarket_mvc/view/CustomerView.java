@@ -4,16 +4,27 @@
  */
 package supermarket_mvc.view;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import supermarket_mvc.controller.CustomerController;
+import supermarket_mvc.model.CustomerModel;
+
+
 /**
  *
  * @author www
  */
 public class CustomerView extends javax.swing.JFrame {
+    
+    private CustomerController customerController;
 
     /**
      * Creates new form CustomerView
      */
     public CustomerView() {
+        customerController = new CustomerController();
         initComponents();
     }
 
@@ -29,7 +40,7 @@ public class CustomerView extends javax.swing.JFrame {
         BasePanel = new javax.swing.JPanel();
         HeaderPanel = new javax.swing.JPanel();
         HeaderLabel = new javax.swing.JLabel();
-        addbitton = new javax.swing.JPanel();
+        addform = new javax.swing.JPanel();
         custIdLabel = new javax.swing.JLabel();
         custIdTextField = new javax.swing.JTextField();
         custTitleLabel = new javax.swing.JLabel();
@@ -39,16 +50,18 @@ public class CustomerView extends javax.swing.JFrame {
         custDOBLabel = new javax.swing.JLabel();
         addressTextField = new javax.swing.JTextField();
         custcityTextField = new javax.swing.JTextField();
-        custDOBTextField2 = new javax.swing.JTextField();
+        custDOBTextField = new javax.swing.JTextField();
         addressLabel = new javax.swing.JLabel();
         cityLabel = new javax.swing.JLabel();
         provinceLabel = new javax.swing.JLabel();
         provinceTextField = new javax.swing.JTextField();
         PostalCodeLabel = new javax.swing.JLabel();
         PostalCodeTextField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
         updatebutton = new javax.swing.JButton();
         Deletebutton = new javax.swing.JButton();
+        salaryLabel = new javax.swing.JLabel();
+        custSalaryTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -93,8 +106,13 @@ public class CustomerView extends javax.swing.JFrame {
 
         PostalCodeLabel.setText("PostalCode");
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setText("Save Customer");
+        saveButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        saveButton.setText("Save Customer");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         updatebutton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         updatebutton.setText("Update Customer");
@@ -102,13 +120,15 @@ public class CustomerView extends javax.swing.JFrame {
         Deletebutton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         Deletebutton.setText("Delete Customer");
 
-        javax.swing.GroupLayout addbittonLayout = new javax.swing.GroupLayout(addbitton);
-        addbitton.setLayout(addbittonLayout);
-        addbittonLayout.setHorizontalGroup(
-            addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addbittonLayout.createSequentialGroup()
+        salaryLabel.setText("Salary");
+
+        javax.swing.GroupLayout addformLayout = new javax.swing.GroupLayout(addform);
+        addform.setLayout(addformLayout);
+        addformLayout.setHorizontalGroup(
+            addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addformLayout.createSequentialGroup()
                 .addGap(62, 62, 62)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(PostalCodeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(custDOBLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(custNameLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
@@ -117,73 +137,79 @@ public class CustomerView extends javax.swing.JFrame {
                     .addComponent(addressLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(59, 59, 59)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(addbittonLayout.createSequentialGroup()
-                        .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(custNameTextField)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(addformLayout.createSequentialGroup()
+                        .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(custNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
                             .addComponent(custTitleTextField)
                             .addComponent(custIdTextField)
                             .addComponent(addressTextField)
-                            .addComponent(custDOBTextField2))
+                            .addComponent(custDOBTextField))
                         .addGap(199, 199, 199))
-                    .addGroup(addbittonLayout.createSequentialGroup()
-                        .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(addformLayout.createSequentialGroup()
+                        .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(PostalCodeTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
                             .addComponent(custcityTextField, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(57, 57, 57)
-                        .addComponent(provinceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(provinceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(salaryLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(provinceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 115, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addbittonLayout.createSequentialGroup()
+                        .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(provinceTextField)
+                            .addComponent(custSalaryTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addformLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Deletebutton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(updatebutton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(saveButton)
                 .addGap(14, 14, 14))
         );
-        addbittonLayout.setVerticalGroup(
-            addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(addbittonLayout.createSequentialGroup()
+        addformLayout.setVerticalGroup(
+            addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(addformLayout.createSequentialGroup()
                 .addGap(28, 28, 28)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(custIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(custIdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(custTitleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(custTitleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(custNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(custNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(custDOBLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(custDOBTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(custDOBTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addressLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(custcityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cityLabel)
                     .addComponent(provinceLabel)
                     .addComponent(provinceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(addbittonLayout.createSequentialGroup()
+                .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(addformLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(PostalCodeLabel)
-                            .addComponent(PostalCodeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(PostalCodeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(salaryLabel)
+                            .addComponent(custSalaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(24, 57, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addbittonLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, addformLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(addbittonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
+                        .addGroup(addformLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(saveButton)
                             .addComponent(updatebutton)
                             .addComponent(Deletebutton))
                         .addContainerGap())))
@@ -194,7 +220,7 @@ public class CustomerView extends javax.swing.JFrame {
         BasePanelLayout.setHorizontalGroup(
             BasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(HeaderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(addbitton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(addform, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         BasePanelLayout.setVerticalGroup(
             BasePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,7 +228,7 @@ public class CustomerView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(HeaderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(addbitton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addform, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(74, Short.MAX_VALUE))
         );
 
@@ -224,6 +250,10 @@ public class CustomerView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_custTitleTextFieldActionPerformed
 
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        saveCustomer();
+    }//GEN-LAST:event_saveButtonActionPerformed
+
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -233,22 +263,48 @@ public class CustomerView extends javax.swing.JFrame {
     private javax.swing.JPanel HeaderPanel;
     private javax.swing.JLabel PostalCodeLabel;
     private javax.swing.JTextField PostalCodeTextField;
-    private javax.swing.JPanel addbitton;
+    private javax.swing.JPanel addform;
     private javax.swing.JLabel addressLabel;
     private javax.swing.JTextField addressTextField;
     private javax.swing.JLabel cityLabel;
     private javax.swing.JLabel custDOBLabel;
-    private javax.swing.JTextField custDOBTextField2;
+    private javax.swing.JTextField custDOBTextField;
     private javax.swing.JLabel custIdLabel;
     private javax.swing.JTextField custIdTextField;
     private javax.swing.JLabel custNameLabel;
     private javax.swing.JTextField custNameTextField;
+    private javax.swing.JTextField custSalaryTextField;
     private javax.swing.JLabel custTitleLabel;
     private javax.swing.JTextField custTitleTextField;
     private javax.swing.JTextField custcityTextField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel provinceLabel;
     private javax.swing.JTextField provinceTextField;
+    private javax.swing.JLabel salaryLabel;
+    private javax.swing.JButton saveButton;
     private javax.swing.JButton updatebutton;
     // End of variables declaration//GEN-END:variables
+
+    private void saveCustomer() {
+         CustomerModel customer = new CustomerModel(
+                custIdTextField.getText(),
+                custTitleTextField.getText(),
+                custNameTextField.getText(),
+                custDOBTextField.getText(),
+                Double.parseDouble(custSalaryTextField.getText()),
+                addressTextField.getText(),
+                custcityTextField.getText(),
+                provinceTextField.getText(),
+                PostalCodeTextField.getText());
+         
+        try {
+            
+           String resp = customerController.saveCustomer(customer);
+           JOptionPane.showMessageDialog(this, resp);
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomerView.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+    
+
 }
