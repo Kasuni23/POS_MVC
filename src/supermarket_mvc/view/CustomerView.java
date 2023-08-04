@@ -136,6 +136,11 @@ public class CustomerView extends javax.swing.JFrame {
 
         updatebutton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         updatebutton.setText("Update Customer");
+        updatebutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updatebuttonActionPerformed(evt);
+            }
+        });
 
         Deletebutton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         Deletebutton.setText("Delete Customer");
@@ -317,6 +322,10 @@ public class CustomerView extends javax.swing.JFrame {
         searchCustomer();
     }//GEN-LAST:event_CustomerTableMouseClicked
 
+    private void updatebuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatebuttonActionPerformed
+        updateCustomer();
+    }//GEN-LAST:event_updatebuttonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel BasePanel;
@@ -442,6 +451,28 @@ public class CustomerView extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(CustomerView.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }
+    
+    public void updateCustomer(){
+        try {
+            CustomerModel customer = new CustomerModel(
+                    custIdTextField.getText(),
+                    custTitleTextField.getText(),
+                    custNameTextField.getText(),
+                    custDOBTextField.getText(),
+                    Double.parseDouble(custSalaryTextField.getText()),
+                    addressTextField.getText(),
+                    custcityTextField.getText(),
+                    provinceTextField.getText(),
+                    PostalCodeTextField.getText());
+            
+             String resp = customerController.updateCustomer(customer);
+             JOptionPane.showMessageDialog(this, resp);
+            clear();
+            loadAllCustomer();
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomerView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
