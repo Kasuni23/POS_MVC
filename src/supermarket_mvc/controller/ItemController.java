@@ -63,7 +63,7 @@ public class ItemController {
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, itemCode);
         ResultSet rst = statement.executeQuery();
-        
+
         while (rst.next()) {
             ItemModel item = new ItemModel(
                     rst.getString(1),
@@ -76,6 +76,38 @@ public class ItemController {
             return item;
         }
         return null;
+    }
+
+    public String updateItem(ItemModel item) throws SQLException {
+        Connection connection = DBConnection.getInstance().getConnection();
+        String query = "UPDATE Item SET Description =?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, item.getDescription());
+        statement.setString(2, item.getPackSize());
+        statement.setDouble(3, item.getUnitPrice());
+        statement.setInt(4, item.getQoh());
+        statement.setString(5, item.getItemCode());
+
+        if (statement.executeUpdate() > 0) {
+            return "Success";
+        } else {
+            return "Fail";
+        }
+
+    }
+
+    public String deleteItem(String itemCode) throws SQLException {
+        Connection connection = DBConnection.getInstance().getConnection();
+        String query = "DELETE FROM Item WHERE ItemCode=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        statement.setString(1, itemCode);
+
+        if (statement.executeUpdate() > 0) {
+            return "Success";
+        } else {
+            return "Fail";
+        }
     }
 
 }
