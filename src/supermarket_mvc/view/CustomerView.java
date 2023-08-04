@@ -144,6 +144,11 @@ public class CustomerView extends javax.swing.JFrame {
 
         Deletebutton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         Deletebutton.setText("Delete Customer");
+        Deletebutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeletebuttonActionPerformed(evt);
+            }
+        });
 
         salaryLabel.setText("Salary");
 
@@ -326,6 +331,10 @@ public class CustomerView extends javax.swing.JFrame {
         updateCustomer();
     }//GEN-LAST:event_updatebuttonActionPerformed
 
+    private void DeletebuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletebuttonActionPerformed
+        deleteCustomer();
+    }//GEN-LAST:event_DeletebuttonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel BasePanel;
@@ -445,7 +454,7 @@ public class CustomerView extends javax.swing.JFrame {
                 custcityTextField.setText(customerModel.getCity());
                 provinceTextField.setText(customerModel.getProvince());
                 PostalCodeTextField.setText(customerModel.getZip());
-            }else {
+            } else {
                 JOptionPane.showMessageDialog(this, "Customer Not Found");
             }
         } catch (SQLException ex) {
@@ -453,8 +462,8 @@ public class CustomerView extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
-    
-    public void updateCustomer(){
+
+    public void updateCustomer() {
         try {
             CustomerModel customer = new CustomerModel(
                     custIdTextField.getText(),
@@ -466,14 +475,30 @@ public class CustomerView extends javax.swing.JFrame {
                     custcityTextField.getText(),
                     provinceTextField.getText(),
                     PostalCodeTextField.getText());
-            
-             String resp = customerController.updateCustomer(customer);
-             JOptionPane.showMessageDialog(this, resp);
+
+            String resp = customerController.updateCustomer(customer);
+            JOptionPane.showMessageDialog(this, resp);
             clear();
             loadAllCustomer();
         } catch (SQLException ex) {
             Logger.getLogger(CustomerView.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
+    }
+
+    private void deleteCustomer() {
+
+        try {
+            String custId = custIdTextField.getText();
+            String resp = customerController.deleteCustomer(custId);
+            JOptionPane.showMessageDialog(this, resp);
+            clear();
+            loadAllCustomer();
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomerView.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+
     }
 
 }
